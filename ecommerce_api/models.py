@@ -14,17 +14,19 @@ class Product(models.Model):
     inStock = models.IntegerField()
 
 
-class OrderItem(models.Model):
-    product = models.ForeignKey(Product, on_delete=models.CASCADE)
-    quantity = models.FloatField()
-
-
 class Order(models.Model):
-    items = models.ManyToManyField(OrderItem)
     total = models.FloatField()
-    #user = models.ForeignKey(to=('users.CustomUser'), on_delete=models.CASCADE)
-
+    user = models.ForeignKey(to=('users.CustomUser'), on_delete=models.CASCADE)
 
 class Cart(models.Model):
     user = models.ForeignKey(to=('users.CustomUser'), on_delete=models.CASCADE)
-    items = models.ManyToManyField(Product)
+
+class CartItem(models.Model):
+    cart = models.ForeignKey(Cart, related_name='items',on_delete=models.CASCADE)
+    product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    quantity = models.FloatField()
+
+class OrderItem(models.Model):
+    product = models.ForeignKey(CartItem, on_delete=models.CASCADE)
+    order = models.ForeignKey(Order, on_delete=models.CASCADE)
+
